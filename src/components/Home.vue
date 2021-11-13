@@ -12,8 +12,15 @@
           @search="search = $event"
         />
 
-        <button v-if="!repos" @click="getRepos">Search!</button>
-        <button v-else @click="getRepos">Search again!</button>
+        <button
+          v-if="!repos"
+          @click="getRepos({search});"
+        >
+          Search!
+        </button>
+        <button v-else @click="getRepos({search});">
+          Search again!
+        </button>
 
         <div class="user-wrapper" v-if="user">
           <img :src="user.avatar_url" />
@@ -55,7 +62,7 @@
 
 <script>
 import search from "@/components/Search.vue";
-import axios from "axios";
+import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 
 export default {
   components: {
@@ -64,9 +71,6 @@ export default {
   data() {
     return {
       search: "",
-      error: null,
-      repos: null,
-      user: null,
       currentSort: "name",
       currentSortDir: "abc",
       page: {
@@ -76,6 +80,11 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      error: (state) => state.error,
+      repos: (state) => state.repos,
+      user: (state) => state.user,
+    }),
     reposSort() {
       return this.repos
         .sort((a, b) => {
@@ -93,27 +102,12 @@ export default {
     },
   },
   methods: {
-    getRepos() {
-      axios
-        .get(`https://api.github.com/users/${this.search}`)
-        .then((res) => {
-          //вытаскиваю аватар, имя, кол-во репозиторий
-          console.log(res.data);
-          this.user = null;
-          this.user = res.data;
-          return axios.get(`https://api.github.com/users/${this.search}/repos`);
-        })
-        .then((res) => {
-          this.repos = res.data;
-          this.error = null;
-        })
-        .catch((err) => {
-          this.repos = null;
-          this.user = null;
-          this.error = "Can`t find this user";
-        });
-    },
-
+    ...mapMutations({
+      setSearch: "setSearch",
+    }),
+    ...mapActions({
+      getRepos: "getRepos",
+    }),
     /*sort(e) {
       if (e === this.currentSort) {
         this.currentSortDir = this.currentSortDir === "abc" ? "desc" : "abc";
