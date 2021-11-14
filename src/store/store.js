@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import axios from "axios";
-import router from '@/router/router'
+import router from "@/router/router";
 
 export default createStore({
   state() {
@@ -14,6 +14,15 @@ export default createStore({
   getters: {
     getReposURL(state) {
       return state.reposURL;
+    },
+    getUser(state) {
+      return state.user;
+    },
+    getRepos(state) {
+      return state.repos;
+    },
+    getError(state) {
+      return state.error;
     },
   },
   mutations: {
@@ -32,38 +41,38 @@ export default createStore({
   },
   actions: {
     async getUser({ commit, dispatch }, { search }) {
-      // добавить лоадер?
       await axios
         .get(`https://api.github.com/users/${search}`)
         .then((res) => {
-          router.push({query: { 'q' : search}})
-          commit("setUser", null);
+          // разобраться с удалением
+          router.push({ query: { q: search } });
+          dispatch("clearСontent");
+
           commit("setUser", res.data);
           commit("setReposURL", res.data.repos_url);
-          dispatch('getRepos')
+
+          dispatch("getRepos");
         })
         .catch((err) => {
-          console.log(err)
-         commit("setUser", null);
-          commit("setRepos", null);
+          dispatch("clearСontent");
           commit("setError", "Can`t find this user");
         });
     },
 
-    async getRepos({ getters, commit }) {
-      // добавить лоадер?
+    async getRepos({ getters, commit, dispatch }) {
       await axios
         .get(`${getters.getReposURL}`)
         .then((res) => {
           commit("setRepos", res.data);
         })
         .catch((err) => {
-          commit("setUser", null);
-          commit("setRepos", null);
+          dispatch("clearСontent");
           commit("setError", "Can`t find this repos");
         });
     },
+    async clearСontent({ commit }) {
+      commit("setUser", null);
+      commit("setRepos", []);
+    },
   },
-  // вынести модуль и namespaced: true,
-  modules: {},
 });

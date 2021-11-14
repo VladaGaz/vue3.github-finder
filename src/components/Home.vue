@@ -13,11 +13,6 @@
           @input="handleSearch"
         />
 
-        <!-- @input="getRepos({ search })" -->
-
-        <!-- <button v-if="!repos" @click="getRepos({ search })">Search!</button>
-        <button v-else @click="getRepos({ search })">Search again!</button> -->
-
         <div class="user-wrapper" v-if="user">
           <img :src="user.avatar_url" />
           <a class="link" target="_blank" :href="user.html_url">
@@ -41,7 +36,7 @@
       </div>
     </section>
     <section>
-      <div class="container" v-if="repos">
+      <div class="container" v-if="repos.length > 0">
         <div class="button-list">
           <div class="btn" @click="prevPage">&#8592;</div>
           <div class="btn" @click="nextPage">&#8594;</div>
@@ -54,7 +49,7 @@
 <script>
 import throttle from "lodash/throttle";
 import search from "@/components/Search.vue";
-import { mapState, mapActions,  } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
@@ -72,11 +67,10 @@ export default {
     };
   },
   computed: {
-    // переписать на гет
-    ...mapState({
-      error: (state) => state.error,
-      repos: (state) => state.repos,
-      user: (state) => state.user,
+    ...mapGetters({
+      user: "getUser",
+      repos: "getRepos",
+      error: "getError",
     }),
     reposSort() {
       return this.repos
@@ -95,12 +89,9 @@ export default {
     },
   },
   methods: {
-    ...mapMutations({
-      setUser: "setUser",
-      setRepos: "setRepos",
-    }),
     ...mapActions({
       getUser: "getUser",
+      clearСontent: "clearСontent",
     }),
     prevPage() {
       if (this.page.current > 1) {
@@ -113,19 +104,16 @@ export default {
       }
     },
     handleSearch: throttle(function (e) {
-      // console.log(   this.$router.push({query: { 'q' : value}}) )
       let value = e.target.value;
 
-      if (value.length < 3) {
+      if (value.length === 0) {
         history.replaceState(null, null, window.location.pathname);
-        this.setUser(null);
-        this.setRepos([]);
-
-        return;
+        this.clearСontent();
+       return;
       }
 
       this.getUser({ search: value });
-    }, 1500),
+    }, 1000),
   },
 };
 </script>
