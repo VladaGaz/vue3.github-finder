@@ -54,7 +54,7 @@
 <script>
 import throttle from "lodash/throttle";
 import search from "@/components/Search.vue";
-import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
+import { mapState, mapActions,  } from "vuex";
 
 export default {
   components: {
@@ -72,6 +72,7 @@ export default {
     };
   },
   computed: {
+    // переписать на гет
     ...mapState({
       error: (state) => state.error,
       repos: (state) => state.repos,
@@ -95,7 +96,8 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setSearch: "setSearch",
+      setUser: "setUser",
+      setRepos: "setRepos",
     }),
     ...mapActions({
       getUser: "getUser",
@@ -111,13 +113,19 @@ export default {
       }
     },
     handleSearch: throttle(function (e) {
+      // console.log(   this.$router.push({query: { 'q' : value}}) )
       let value = e.target.value;
 
       if (value.length < 3) {
+        history.replaceState(null, null, window.location.pathname);
+        this.setUser(null);
+        this.setRepos([]);
+
         return;
       }
+
       this.getUser({ search: value });
-    }, 2500),
+    }, 1500),
   },
 };
 </script>

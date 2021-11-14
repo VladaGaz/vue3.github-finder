@@ -1,11 +1,12 @@
 import { createStore } from "vuex";
 import axios from "axios";
+import router from '@/router/router'
 
 export default createStore({
   state() {
     return {
       error: null,
-      repos: null,
+      repos: [],
       user: null,
       reposURL: "",
     };
@@ -35,13 +36,15 @@ export default createStore({
       await axios
         .get(`https://api.github.com/users/${search}`)
         .then((res) => {
+          router.push({query: { 'q' : search}})
           commit("setUser", null);
           commit("setUser", res.data);
           commit("setReposURL", res.data.repos_url);
           dispatch('getRepos')
         })
         .catch((err) => {
-          commit("setUser", null);
+          console.log(err)
+         commit("setUser", null);
           commit("setRepos", null);
           commit("setError", "Can`t find this user");
         });
@@ -53,10 +56,10 @@ export default createStore({
         .get(`${getters.getReposURL}`)
         .then((res) => {
           commit("setRepos", res.data);
-          console.log(res.data);
-          commit("setError", null);
         })
         .catch((err) => {
+          commit("setUser", null);
+          commit("setRepos", null);
           commit("setError", "Can`t find this repos");
         });
     },
