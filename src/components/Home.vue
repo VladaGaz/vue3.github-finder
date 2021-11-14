@@ -10,32 +10,21 @@
           :value="search"
           placeholder="Type username..."
           @search="search = $event"
+          @input="handleSearch"
         />
 
-        <button
-          v-if="!repos"
-          @click="getRepos({search});"
-        >
-          Search!
-        </button>
-        <button v-else @click="getRepos({search});">
-          Search again!
-        </button>
+        <!-- @input="getRepos({ search })" -->
+
+        <!-- <button v-if="!repos" @click="getRepos({ search })">Search!</button>
+        <button v-else @click="getRepos({ search })">Search again!</button> -->
 
         <div class="user-wrapper" v-if="user">
           <img :src="user.avatar_url" />
-          <span> {{ this.user.name }} </span>
+          <a class="link" target="_blank" :href="user.html_url">
+            {{ this.user.login }}
+          </a>
           <span> {{ this.user.public_repos }} </span>
         </div>
-
-        <!-- <div class="names-wrapper" v-if="repos">
-          <span>
-            <a @click="sort('name')">Name repository &#8595</a>
-          </span>
-          <span>
-            <a @click="sort('stargazers_count')">Star &#8595</a>
-          </span>
-        </div> -->
 
         <div class="repos_wrapper" v-if="repos">
           <div class="repos_item" v-for="repo in reposSort" :key="repo.id">
@@ -43,24 +32,27 @@
               <a class="link" target="_blank" :href="repo.html_url">{{
                 repo.name
               }}</a>
+              <span>{{ repo.description }} </span>
+              <span>{{ repo.language }} </span>
               <span>{{ repo.stargazers_count }} ⭐</span>
             </div>
           </div>
         </div>
       </div>
     </section>
-    <!-- <section>
+    <section>
       <div class="container" v-if="repos">
         <div class="button-list">
-          <div class="btn btnPrimary" @click="prevPage">&#8592;</div>
-          <div class="btn btnPrimary" @click="nextPage">&#8594;</div>
+          <div class="btn" @click="prevPage">&#8592;</div>
+          <div class="btn" @click="nextPage">&#8594;</div>
         </div>
       </div>
-    </section> -->
+    </section>
   </div>
 </template>
 
 <script>
+import throttle from "lodash/throttle";
 import search from "@/components/Search.vue";
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
 
@@ -106,14 +98,8 @@ export default {
       setSearch: "setSearch",
     }),
     ...mapActions({
-      getRepos: "getRepos",
+      getUser: "getUser",
     }),
-    /*sort(e) {
-      if (e === this.currentSort) {
-        this.currentSortDir = this.currentSortDir === "abc" ? "desc" : "abc";
-      }
-      this.currentSort = e;
-    },
     prevPage() {
       if (this.page.current > 1) {
         this.page.current -= 1;
@@ -123,7 +109,15 @@ export default {
       if (this.page.current * this.page.length < this.repos.length) {
         this.page.current += 1;
       }
-    },*/
+    },
+    handleSearch: throttle(function (e) {
+      let value = e.target.value;
+
+      if (value.length < 3) {
+        return;
+      }
+      this.getUser({ search: value });
+    }, 2500),
   },
 };
 </script>

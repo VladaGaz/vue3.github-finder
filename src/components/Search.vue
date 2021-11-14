@@ -21,7 +21,7 @@
       </div>
     </div>
     <!-- Search input -->
-    <input type="text" :placeholder="placeholder" v-model="search" />
+    <input type="text" :placeholder="placeholder" v-model="search"/>
   </div>
 </template>
 
@@ -47,6 +47,7 @@ export default {
       this.$emit("search", val);
     },
   },
+  
 };
 </script>
 
