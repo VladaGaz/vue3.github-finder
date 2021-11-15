@@ -44,35 +44,36 @@ export default createStore({
       await axios
         .get(`https://api.github.com/users/${search}`)
         .then((res) => {
-          // разобраться с удалением
-          router.push({ query: { q: search } });
-          dispatch("clearСontent");
 
+          router.push({ query: { q: search } });
+ 
           commit("setUser", res.data);
           commit("setReposURL", res.data.repos_url);
 
           dispatch("getRepos");
         })
         .catch((err) => {
-          dispatch("clearСontent");
           commit("setError", "Can`t find this user");
+          commit("setUser", null);
+          commit("setRepos", []);
         });
     },
 
-    async getRepos({ getters, commit, dispatch }) {
+    async getRepos({ getters, commit }) {
+      // лоадер добавить
       await axios
         .get(`${getters.getReposURL}`)
         .then((res) => {
           commit("setRepos", res.data);
         })
         .catch((err) => {
-          dispatch("clearСontent");
           commit("setError", "Can`t find this repos");
         });
     },
-    async clearСontent({ commit }) {
+     clearСontent({ commit }) {
       commit("setUser", null);
       commit("setRepos", []);
+      commit("setError", "");
     },
   },
 });

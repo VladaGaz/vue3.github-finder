@@ -43,6 +43,9 @@ export default {
     };
   },
   watch: {
+    value(val) {
+      this.search = val;
+    },
     search(val) {
       this.$emit("search", val);
     },

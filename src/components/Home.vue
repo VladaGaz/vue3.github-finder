@@ -88,6 +88,15 @@ export default {
         });
     },
   },
+  mounted() {
+    // если q есть то делать запрос данных
+    const urlParams = new URLSearchParams(window.location.search);
+    const value = urlParams.get("q");
+    if (value) {
+      this.getUser({ search: value });
+      this.search=value
+    }
+  },
   methods: {
     ...mapActions({
       getUser: "getUser",
@@ -109,7 +118,7 @@ export default {
       if (value.length === 0) {
         history.replaceState(null, null, window.location.pathname);
         this.clearСontent();
-       return;
+        return;
       }
 
       this.getUser({ search: value });

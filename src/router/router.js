@@ -6,10 +6,6 @@ const routes = [
         path: '/',
         component: App
     },
-    {
-        path: '/repo',
-        component: App
-    },
 ]
 
 const router = createRouter({
