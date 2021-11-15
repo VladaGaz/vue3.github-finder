@@ -1,7 +1,4 @@
 <template>
-  <div class="error" v-if="error" style="margin-bottom: 20px">
-    <p>{{ error }}</p>
-  </div>
 
   <search
     :value="search"
@@ -9,6 +6,10 @@
     @search="search = $event"
     @input="handleSearch"
   />
+
+  <div class="flex items-center justify-center min-w-full mb-5" v-if="error">
+    <p class=" text-gray-400">{{ error }}</p>
+  </div>
 
   <div
     v-if="user"
@@ -39,18 +40,18 @@
     </div>
   </div>
 
-  <div v-if="repos" class="flex items-center justify-center min-w-full mb-5">
-        <table class="table text-gray-400 border-solid  ">
+  <div v-if="repos.length !== 0" class="flex items-center justify-center min-w-full mb-5">
+        <table class="table text-gray-400 border-solid">
           <thead class=" text-gray-500 ">
             <tr>
-              <th class="p-3 text-center">repo.name</th>
+              <th class="p-3 text-center">name</th>
               <th class="p-3 text-center">description</th>
               <th class="p-3 text-center">language</th>
-              <th class="p-3 text-center">stargazers_count</th>
+              <th class="p-3 text-center">stargazers</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="repo in reposSort" :key="repo.id">
+            <tr class="text-center" v-for="repo in reposSort" :key="repo.id">
               <td class="p-3 text-center">
                 <a class="link" target="_blank" :href="repo.html_url">{{
                   repo.name
@@ -99,52 +100,6 @@
       Next
     </a>
   </div>
-
-  <!-- <div>
-    <section>
-      <div class="container">
-        <div class="error" v-if="error" style="margin-bottom: 20px">
-          <p>{{ error }}</p>
-        </div>
-
-        <search
-          :value="search"
-          placeholder="Type username..."
-          @search="search = $event"
-          @input="handleSearch"
-        />
-
-        <div class="user-wrapper" v-if="user">
-          <img :src="user.avatar_url" />
-          <a class="link" target="_blank" :href="user.html_url">
-            {{ this.user.login }}
-          </a>
-          <span> {{ this.user.public_repos }} </span>
-        </div>
-
-        <div class="repos_wrapper" v-if="repos">
-          <div class="repos_item" v-for="repo in reposSort" :key="repo.id">
-            <div class="repos_info">
-              <a class="link" target="_blank" :href="repo.html_url">{{
-                repo.name
-              }}</a>
-              <span>{{ repo.description }} </span>
-              <span>{{ repo.language }} </span>
-              <span>{{ repo.stargazers_count }} ⭐</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section>
-      <div class="container" v-if="repos.length > 0">
-        <div class="button-list">
-          <div class="btn" @click="prevPage">&#8592;</div>
-          <div class="btn" @click="nextPage">&#8594;</div>
-        </div>
-      </div>
-    </section>
-  </div> -->
 </template>
 
 <script>
@@ -190,12 +145,13 @@ export default {
     },
   },
   mounted() {
+  
     const urlParams = new URLSearchParams(window.location.search);
     const value = urlParams.get("q");
 
     if (value) {
       this.search = value;
-      // this.getUser({ search: this.search });
+      this.getUser({ search: this.search });
     }
   },
   methods: {
@@ -223,8 +179,8 @@ export default {
       }
 
       this.$router.push({ query: { q: value } });
-      // this.getUser({ search: value });
-      this.getUser({ search: "VladaGaz" });
+      this.getUser({ search: value });
+  
     }, 1000),
   },
 };
