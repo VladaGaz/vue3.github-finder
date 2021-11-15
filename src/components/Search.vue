@@ -1,6 +1,21 @@
 <template>
-  <div class="wrapper__search">
-    <!-- Search -->
+
+  <div class="flex justify-center items-center mb-5">
+    <div class="mt-5 mb-2 border-2 py-1 px-3 flex justify-between rounde-md rounded-md">
+      <input 
+      class="flex-grow outline-none text-black focus:placeholder-indigo-400"
+      type="text"
+      :placeholder="placeholder"
+      v-model="search" />
+      <spa>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 hover:text-blue-400 transition duration-100 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </spa>
+    </div>
+</div>
+
+  <!-- <div class="wrapper__search">
     <div class="search">
       <div class="search-icon">
         <svg
@@ -20,9 +35,13 @@
         </svg>
       </div>
     </div>
-    <!-- Search input -->
-    <input type="text" :placeholder="placeholder" v-model="search"/>
-  </div>
+
+    <input
+      type="text"
+      :placeholder="placeholder"
+      v-model="search"
+    />
+  </div>  -->
 </template>
 
 <script>
@@ -50,15 +69,14 @@ export default {
       this.$emit("search", val);
     },
   },
-  
 };
 </script>
 
 <style scoped>
-svg {
+/*svg {
   color: #e4e4e4;
 }
-/* Search */
+
 .wrapper__search {
   position: relative;
   margin: 0px auto;
@@ -84,7 +102,7 @@ input {
   font-size: 16px;
   min-width: 400px;
   height: auto;
-}
+}*/
 </style>
 
 

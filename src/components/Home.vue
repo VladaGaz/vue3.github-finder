@@ -1,5 +1,106 @@
 <template>
-  <div>
+  <div class="error" v-if="error" style="margin-bottom: 20px">
+    <p>{{ error }}</p>
+  </div>
+
+  <search
+    :value="search"
+    placeholder="Type username..."
+    @search="search = $event"
+    @input="handleSearch"
+  />
+
+  <div
+    v-if="user"
+    class="
+      w-full
+      rounded-lg
+      sahdow-lg
+      flex flex-col
+      justify-center
+      items-center
+      mb-5
+    "
+  >
+    <div class="mb-5">
+      <img
+        class="object-center object-cover rounded-full h-36 w-36"
+        :src="user.avatar_url"
+        alt="avatar"
+      />
+    </div>
+    <div class="text-center">
+      <a class="link" target="_blank" :href="user.html_url">
+        {{ this.user.login }}
+      </a>
+      <p class="text-base text-gray-400 font-normal">
+        {{ this.user.public_repos }}
+      </p>
+    </div>
+  </div>
+
+  <div v-if="repos" class="flex items-center justify-center min-w-full mb-5">
+        <table class="table text-gray-400 border-solid  ">
+          <thead class=" text-gray-500 ">
+            <tr>
+              <th class="p-3 text-center">repo.name</th>
+              <th class="p-3 text-center">description</th>
+              <th class="p-3 text-center">language</th>
+              <th class="p-3 text-center">stargazers_count</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="repo in reposSort" :key="repo.id">
+              <td class="p-3 text-center">
+                <a class="link" target="_blank" :href="repo.html_url">{{
+                  repo.name
+                }}</a>
+              </td>
+              <td class="p-3 text-center">
+                {{ repo.description }}
+              </td>
+              <td class="p-3 text-center">
+                {{ repo.language }}
+              </td>
+              <td class="p-3 text-center">{{ repo.stargazers_count }} ⭐</td>
+            </tr>
+          </tbody>
+        </table>
+     
+  </div>
+
+  <div v-if="repos.length > 0" class="flex items-center justify-center space-x-1 mb-5">
+    <a
+      @click="prevPage"
+      href="#"
+      class="
+        px-4
+        py-2
+        text-gray-500
+        bg-gray-100
+        rounded-md
+        hover:bg-blue-400 hover:text-white
+      "
+    >
+      Previous
+    </a>
+    <a
+      @click="nextPage"
+      href="#"
+      class="
+        px-4
+        py-2
+        text-gray-500
+        bg-gray-100
+        rounded-md
+        hover:bg-blue-400 hover:text-white
+      "
+    >
+      Next
+    </a>
+  </div>
+
+  <!-- <div>
     <section>
       <div class="container">
         <div class="error" v-if="error" style="margin-bottom: 20px">
@@ -43,7 +144,7 @@
         </div>
       </div>
     </section>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -93,8 +194,8 @@ export default {
     const value = urlParams.get("q");
 
     if (value) {
-      this.search=value
-      this.getUser({ search: this.search });
+      this.search = value;
+      // this.getUser({ search: this.search });
     }
   },
   methods: {
@@ -113,7 +214,6 @@ export default {
       }
     },
     handleSearch: throttle(function (e) {
-
       let value = e.target.value;
 
       if (value.length === 0) {
@@ -123,59 +223,9 @@ export default {
       }
 
       this.$router.push({ query: { q: value } });
-      this.getUser({ search: value });
-
+      // this.getUser({ search: value });
+      this.getUser({ search: "VladaGaz" });
     }, 1000),
   },
 };
 </script>
-
-<style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
-button {
-  margin-top: 20px;
-}
-.repos_wrapper {
-  width: 400px;
-  margin: 20px 0;
-}
-
-.repos_info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid #dbdbdb;
-}
-
-.user-wrapper {
-  margin-top: 20px;
-  /*span {
-    padding: 0 30px;
-  }*/
-}
-.names-wrapper {
-  margin-top: 30px;
-  /*span {
-    padding: 10px 95px;
-  }*/
-}
-img {
-  width: 60px;
-  border-radius: 50%;
-}
-
-.button-list {
-  width: 100%;
-  text-align: center;
-  /*.btn {
-    border-radius: 40px;
-    margin: 0 10px;
-  }*/
-}
-</style>
