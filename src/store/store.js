@@ -4,7 +4,10 @@ import axios from "axios";
 export default createStore({
   state() {
     return {
-      error: null,
+      loadingUser: false,
+      loadingRepos: false,
+      errorUser: false,
+      errorRepos: false,
       repos: [],
       user: null,
       reposURL: "",
@@ -20,8 +23,17 @@ export default createStore({
     getRepos(state) {
       return state.repos;
     },
-    getError(state) {
-      return state.error;
+    getErrorUser(state) {
+      return state.errorUser;
+    },
+    getErrorRepos(state) {
+      return state.errorRepos;
+    },
+    getLoadingUser(state) {
+      return state.loadingUser;
+    },
+    getLoadingRepos(state) {
+      return state.loadingRepos;
     },
   },
   mutations: {
@@ -34,43 +46,63 @@ export default createStore({
     setRepos(state, repos) {
       state.repos = repos;
     },
-    setError(state, error) {
-      state.error = error;
+    setErrorUser(state, errorUser) {
+      state.errorUser = errorUser;
+    },
+    setErrorRepos(state, errorRepos) {
+      state.errorRepos = errorRepos;
+    },
+    setLoadingUser(state, loadingUser) {
+      state.loadingUser = loadingUser;
+    },
+    setLoadingRepos(state, loadingRepos) {
+      state.loadingRepos = loadingRepos;
     },
   },
   actions: {
     async getUser({ commit, dispatch }, { search }) {
+      commit("setLoadingUser", true);
       await axios
         .get(`https://api.github.com/users/${search}`)
         .then((res) => {
-          commit("setError", "");
+          commit("setErrorUser", false);
+          commit("setErrorRepos", false);
+
           commit("setUser", res.data);
           commit("setReposURL", res.data.repos_url);
 
           dispatch("getRepos");
         })
         .catch((err) => {
-          commit("setError", "Can`t find this user");
+          commit("setErrorUser", true);
           commit("setUser", null);
           commit("setRepos", []);
+        })
+        .finally(() => {
+          commit("setLoadingUser", false);
         });
     },
 
     async getRepos({ getters, commit }) {
-      // лоадер добавить
+      
+      commit("setLoadingRepos", true);
       await axios
         .get(`${getters.getReposURL}`)
         .then((res) => {
           commit("setRepos", res.data);
         })
         .catch((err) => {
-          commit("setError", "Can`t find this repos");
+          commit("setErrorRepos", true);
+        })
+        .finally(() => {
+          commit("setLoadingRepos", false);
         });
     },
-     clearСontent({ commit }) {
+    clearСontent({ commit }) {
       commit("setUser", null);
       commit("setRepos", []);
-      commit("setError", "");
+      commit("setErrorUser", false);
+      commit("setErrorRepos", false);
     },
   },
 });
