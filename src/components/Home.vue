@@ -50,7 +50,6 @@
 import throttle from "lodash/throttle";
 import search from "@/components/Search.vue";
 import { mapGetters, mapActions } from "vuex";
-//import router from "@/router/router";
 
 export default {
   components: {
