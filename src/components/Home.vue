@@ -31,7 +31,7 @@
       />
     </div>
     <div class="text-center">
-      <a class="link" target="_blank" :href="user.html_url">
+      <a class="hover:text-blue-400" target="_blank" :href="user.html_url">
         {{ this.user.login }}
       </a>
       <p class="text-base text-gray-400 font-normal">
@@ -53,7 +53,7 @@
           <tbody>
             <tr class="text-center" v-for="repo in reposSort" :key="repo.id">
               <td class="p-3 text-center">
-                <a class="link" target="_blank" :href="repo.html_url">{{
+                <a class="hover:text-blue-400" target="_blank" :href="repo.html_url">{{
                   repo.name
                 }}</a>
               </td>
