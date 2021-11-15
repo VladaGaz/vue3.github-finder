@@ -44,9 +44,7 @@ export default createStore({
       await axios
         .get(`https://api.github.com/users/${search}`)
         .then((res) => {
-
-          router.push({ query: { q: search } });
- 
+          commit("setError", "");
           commit("setUser", res.data);
           commit("setReposURL", res.data.repos_url);
 

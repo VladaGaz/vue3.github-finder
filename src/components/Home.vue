@@ -50,6 +50,7 @@
 import throttle from "lodash/throttle";
 import search from "@/components/Search.vue";
 import { mapGetters, mapActions } from "vuex";
+//import router from "@/router/router";
 
 export default {
   components: {
@@ -89,12 +90,12 @@ export default {
     },
   },
   mounted() {
-    // если q есть то делать запрос данных
     const urlParams = new URLSearchParams(window.location.search);
     const value = urlParams.get("q");
+
     if (value) {
-      this.getUser({ search: value });
       this.search=value
+      this.getUser({ search: this.search });
     }
   },
   methods: {
@@ -113,6 +114,7 @@ export default {
       }
     },
     handleSearch: throttle(function (e) {
+
       let value = e.target.value;
 
       if (value.length === 0) {
@@ -121,7 +123,9 @@ export default {
         return;
       }
 
+      this.$router.push({ query: { q: value } });
       this.getUser({ search: value });
+
     }, 1000),
   },
 };
