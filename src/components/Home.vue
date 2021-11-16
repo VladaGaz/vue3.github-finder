@@ -6,8 +6,8 @@
     @input="handleSearch"
   />
 
-  <loader v-if="loadingUser || loadingRepos" />
-  <messageError v-if="errorUser || errorRepos" />
+  <loader v-if="loadingUser || loadingRepositories" />
+  <messageError v-else-if="errorUser || errorRepositories" />
 
   <div v-else>
     <div
@@ -40,7 +40,7 @@
     </div>
 
     <div
-      v-if="repos.length !== 0"
+      v-if="repositories.length !== 0"
       class="flex items-center justify-center min-w-full mb-5"
     >
       <table class="table text-gray-400 border-solid">
@@ -53,29 +53,35 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="text-center" v-for="repo in reposSort" :key="repo.id">
+          <tr
+            class="text-center"
+            v-for="repository in repositoriesSort"
+            :key="repository.id"
+          >
             <td class="p-3 text-center">
               <a
                 class="hover:text-blue-400"
                 target="_blank"
-                :href="repo.html_url"
-                >{{ repo.name }}</a
+                :href="repository.html_url"
+                >{{ repository.name }}</a
               >
             </td>
             <td class="p-3 text-center">
-              {{ repo.description }}
+              {{ repository.description }}
             </td>
             <td class="p-3 text-center">
-              {{ repo.language }}
+              {{ repository.language }}
             </td>
-            <td class="p-3 text-center">{{ repo.stargazers_count }} ⭐</td>
+            <td class="p-3 text-center">
+              {{ repository.stargazers_count }} ⭐
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div
-      v-if="repos.length > 0"
+      v-if="repositories.length > 0"
       class="flex items-center justify-center space-x-1 mb-5"
     >
       <a
@@ -137,14 +143,14 @@ export default {
   computed: {
     ...mapGetters({
       user: "getUser",
-      repos: "getRepos",
+      repositories: "getRepositories",
       errorUser: "getErrorUser",
-      errorRepos: "getErrorRepos",
+      errorRepositories: "getErrorRepositories",
       loadingUser: "getLoadingUser",
-      loadingRepos: "getLoadingRepos",
+      loadingRepositories: "getLoadingRepositories",
     }),
-    reposSort() {
-      return this.repos
+    repositoriesSort() {
+      return this.repositories
         .sort((a, b) => {
           let mod = 1;
           if (this.currentSortDir === "desc") mod = -1;
@@ -153,8 +159,8 @@ export default {
           return 0;
         })
         .filter((item, index) => {
-          let start = (this.page.current - 1) * this.page.length;
-          let end = this.page.current * this.page.length;
+          const start = (this.page.current - 1) * this.page.length;
+          const end = this.page.current * this.page.length;
           if (index >= start && index < end) return true;
         });
     },
@@ -179,19 +185,19 @@ export default {
       }
     },
     nextPage() {
-      if (this.page.current * this.page.length < this.repos.length) {
+      if (this.page.current * this.page.length < this.repositories.length) {
         this.page.current += 1;
       }
     },
     handleSearch: throttle(function (e) {
-      let value = e.target.value;
+      const value = e.target.value;
 
       if (value.length === 0) {
         history.replaceState(null, null, window.location.pathname);
         this.clearСontent();
         return;
       }
-
+      
       this.$router.push({ query: { q: value } });
       this.getUser({ search: value });
     }, 1000),

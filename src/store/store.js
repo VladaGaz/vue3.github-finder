@@ -5,58 +5,58 @@ export default createStore({
   state() {
     return {
       loadingUser: false,
-      loadingRepos: false,
+      loadingRepositories: false,
       errorUser: false,
-      errorRepos: false,
-      repos: [],
+      errorRepositories: false,
+      repositories: [],
       user: null,
-      reposURL: "",
+      repositoriesURL: "",
     };
   },
   getters: {
-    getReposURL(state) {
-      return state.reposURL;
+    getRepositoriesURL(state) {
+      return state.repositoriesURL;
     },
     getUser(state) {
       return state.user;
     },
-    getRepos(state) {
-      return state.repos;
+    getRepositories(state) {
+      return state.repositories;
     },
     getErrorUser(state) {
       return state.errorUser;
     },
-    getErrorRepos(state) {
-      return state.errorRepos;
+    getErrorRepositories(state) {
+      return state.errorRepositories;
     },
     getLoadingUser(state) {
       return state.loadingUser;
     },
-    getLoadingRepos(state) {
-      return state.loadingRepos;
+    getLoadingRepositories(state) {
+      return state.loadingRepositories;
     },
   },
   mutations: {
-    setReposURL(state, reposURL) {
-      state.reposURL = reposURL;
+    setRepositoriesURL(state, repositoriesURL) {
+      state.repositoriesURL = repositoriesURL;
     },
     setUser(state, user) {
       state.user = user;
     },
-    setRepos(state, repos) {
-      state.repos = repos;
+    setRepositories(state, repositories) {
+      state.repositories = repositories;
     },
     setErrorUser(state, errorUser) {
       state.errorUser = errorUser;
     },
-    setErrorRepos(state, errorRepos) {
-      state.errorRepos = errorRepos;
+    setErrorRepositories(state, errorRepositories) {
+      state.errorRepositories = errorRepositories;
     },
     setLoadingUser(state, loadingUser) {
       state.loadingUser = loadingUser;
     },
-    setLoadingRepos(state, loadingRepos) {
-      state.loadingRepos = loadingRepos;
+    setLoadingRepositories(state, loadingRepositories) {
+      state.loadingRepositories = loadingRepositories;
     },
   },
   actions: {
@@ -66,43 +66,43 @@ export default createStore({
         .get(`https://api.github.com/users/${search}`)
         .then((res) => {
           commit("setErrorUser", false);
-          commit("setErrorRepos", false);
+          commit("setErrorRepositories", false);
 
           commit("setUser", res.data);
-          commit("setReposURL", res.data.repos_url);
+          commit("setRepositoriesURL", res.data.repos_url);
 
-          dispatch("getRepos");
+          dispatch("getRepositories");
         })
         .catch((err) => {
           commit("setErrorUser", true);
           commit("setUser", null);
-          commit("setRepos", []);
+          commit("setRepositories", []);
         })
         .finally(() => {
           commit("setLoadingUser", false);
         });
     },
 
-    async getRepos({ getters, commit }) {
+    async getRepositories({ getters, commit }) {
       
-      commit("setLoadingRepos", true);
+      commit("setLoadingRepositories", true);
       await axios
-        .get(`${getters.getReposURL}`)
+        .get(`${getters.getRepositoriesURL}`)
         .then((res) => {
-          commit("setRepos", res.data);
+          commit("setRepositories", res.data);
         })
         .catch((err) => {
-          commit("setErrorRepos", true);
+          commit("setErrorRepositories", true);
         })
         .finally(() => {
-          commit("setLoadingRepos", false);
+          commit("setLoadingRepositories", false);
         });
     },
     clearСontent({ commit }) {
       commit("setUser", null);
-      commit("setRepos", []);
+      commit("setRepositories", []);
       commit("setErrorUser", false);
-      commit("setErrorRepos", false);
+      commit("setErrorRepositories", false);
     },
   },
 });
